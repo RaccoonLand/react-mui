@@ -1,0 +1,13 @@
+با این ترتیب موافق هستم. فقط توجه داشته باشد که باید همزمان از RTL و LTR پشتیبانی شود.
+ترتیب پیاده‌سازی داخل Sample
+اسکلت — Vite + React + TS + MUI + Router + RTL
+Providers — Theme، QueryClient، Toast، Confirm host
+api + hooks — parse PipelineResponse، loader، toast خطا
+Layout + Page — shell ثابت backoffice
+People List — اولین صفحه‌ی واقعی با API
+Create/Edit Form — validation از props
+Delete + Confirm
+Drawer — جزئیات یا فرم سریع
+هر مرحله را در مرورگر تست کنید؛ بعد بروید مرحله بعد.
+
+مراحل را کوتاه پیش ببریم تا من هم بتوانم کد را مرور کنم و یاد بگیرم.

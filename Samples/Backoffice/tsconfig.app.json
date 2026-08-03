@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@raccoonland/theme": ["../../Modules/theme/src/index.ts"],
+      "@raccoonland/theme/*": ["../../Modules/theme/src/*"],
+      "@raccoonland/feedback": ["../../Modules/feedback/src/index.ts"],
+      "@raccoonland/feedback/*": ["../../Modules/feedback/src/*"],
+      "@raccoonland/form-kit": ["../../Modules/form-kit/src/index.ts"],
+      "@raccoonland/form-kit/*": ["../../Modules/form-kit/src/*"],
+      "@raccoonland/layout": ["../../Modules/layout/src/index.ts"],
+      "@raccoonland/layout/*": ["../../Modules/layout/src/*"],
+      "@raccoonland/page": ["../../Modules/page/src/index.ts"],
+      "@raccoonland/page/*": ["../../Modules/page/src/*"],
+      "@raccoonland/pipeline-client": ["../../Core/pipeline-client/src/index.ts"],
+      "@raccoonland/pipeline-client/*": ["../../Core/pipeline-client/src/*"]
+    },
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
