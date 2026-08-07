@@ -4,9 +4,11 @@ import {
   Badge,
   Box,
   Button,
+  Divider,
   Menu,
   MenuItem,
   Stack,
+  Typography,
 } from '@mui/material'
 import { useEffect, useState, type MouseEvent } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
@@ -14,7 +16,7 @@ import { useRaccoonTheme } from '@raccoonland/theme'
 import type { RaccoonTokens } from '@raccoonland/theme'
 import { HORIZONTAL_NAV_HEIGHT } from './constants'
 import { useLayoutShell } from './LayoutShellContext'
-import { hasActiveDescendant, isPathActive } from './navUtils'
+import { hasActiveDescendant, isPathActive, isSeparatorItem } from './navUtils'
 import type { LayoutNavItem } from './types'
 import { layoutZIndex } from './zIndex'
 
@@ -184,6 +186,51 @@ function HorizontalLeafItem({ item }: { item: LayoutNavItem }) {
 }
 
 /**
+ * Non-interactive divider between top-nav sections. Vertical rule plus an
+ * optional small caption; visibly smaller than nav buttons.
+ */
+function HorizontalSeparator({ item }: { item: LayoutNavItem }) {
+  const raccoon = useRaccoonTheme()
+
+  return (
+    <Box
+      role="separator"
+      aria-label={item.label || undefined}
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.5,
+        marginInline: 0.75,
+        userSelect: 'none',
+        cursor: 'default',
+        color: 'text.disabled',
+      }}
+    >
+      <Divider
+        orientation="vertical"
+        flexItem
+        sx={{ my: 0.75, borderColor: raccoon.border.subtle }}
+      />
+      {item.label ? (
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: 0.7,
+            textTransform: 'uppercase',
+            color: 'inherit',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {item.label}
+        </Typography>
+      ) : null}
+    </Box>
+  )
+}
+
+/**
  * Top navigation bar for horizontal layout mode.
  * Intentionally separate from SidebarVertical — no shared UI helpers.
  */
@@ -222,13 +269,16 @@ export function SidebarHorizontal() {
           scrollbarWidth: 'thin',
         }}
       >
-        {navigation.map((item) =>
-          item.children?.length ? (
+        {navigation.map((item) => {
+          if (isSeparatorItem(item)) {
+            return <HorizontalSeparator key={item.key} item={item} />
+          }
+          return item.children?.length ? (
             <HorizontalGroupItem key={item.key} item={item} />
           ) : (
             <HorizontalLeafItem key={item.key} item={item} />
-          ),
-        )}
+          )
+        })}
       </Stack>
     </Box>
   )

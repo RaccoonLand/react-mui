@@ -28,6 +28,7 @@ export {
   isGroupActive,
   hasActiveDescendant,
   getInitialExpandedGroups,
+  isSeparatorItem,
 } from './navUtils'
 
 export {

@@ -9,12 +9,12 @@
     "Samples/*"
   ],
   "scripts": {
-    "clean:packages": "npm run clean -w @raccoonland/theme -w @raccoonland/page -w @raccoonland/layout -w @raccoonland/feedback -w @raccoonland/form-kit -w @raccoonland/pipeline-client --if-present",
-    "build:packages": "npm run build -w @raccoonland/theme && npm run build -w @raccoonland/page && npm run build -w @raccoonland/layout && npm run build -w @raccoonland/feedback && npm run build -w @raccoonland/form-kit && npm run build -w @raccoonland/pipeline-client",
+    "clean:packages": "npm run clean -w @raccoonland/theme -w @raccoonland/page -w @raccoonland/layout -w @raccoonland/feedback -w @raccoonland/form-kit -w @raccoonland/data-table -w @raccoonland/pipeline-client --if-present",
+    "build:packages": "npm run build -w @raccoonland/theme && npm run build -w @raccoonland/feedback && npm run build -w @raccoonland/page && npm run build -w @raccoonland/layout && npm run build -w @raccoonland/form-kit && npm run build -w @raccoonland/data-table && npm run build -w @raccoonland/pipeline-client",
     "build": "npm run build:packages && npm run build -w raccoonland-backoffice-sample",
     "build:sample": "npm run build -w raccoonland-backoffice-sample",
     "dev": "npm run dev -w raccoonland-backoffice-sample",
-    "publish:packages": "npm publish -w @raccoonland/theme -w @raccoonland/page -w @raccoonland/layout -w @raccoonland/feedback -w @raccoonland/form-kit -w @raccoonland/pipeline-client --access public --registry http://localhost:4873/"
+    "publish:packages": "npm publish -w @raccoonland/theme -w @raccoonland/page -w @raccoonland/layout -w @raccoonland/feedback -w @raccoonland/form-kit -w @raccoonland/data-table -w @raccoonland/pipeline-client --access public --registry http://localhost:4873/"
   },
   "devDependencies": {
     "typescript": "~6.0.2"

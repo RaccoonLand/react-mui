@@ -4,6 +4,7 @@ import DynamicFormOutlinedIcon from '@mui/icons-material/DynamicFormOutlined'
 import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined'
 import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined'
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined'
+import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined'
 import WebAssetOutlinedIcon from '@mui/icons-material/WebAssetOutlined'
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined'
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined'
@@ -20,6 +21,7 @@ export const crumbIcons = {
   feedback: WidgetsOutlinedIcon,
   formKit: DynamicFormOutlinedIcon,
   page: WebAssetOutlinedIcon,
+  dataTable: TableChartOutlinedIcon,
   layout: ViewSidebarOutlinedIcon,
   notFound: SearchOffOutlinedIcon,
 } as const
@@ -49,6 +51,11 @@ const packageGuides = {
     path: '/packages/page',
     titleKey: 'guidePageTitle' as const,
     icon: crumbIcons.page,
+  },
+  dataTable: {
+    path: '/packages/data-table',
+    titleKey: 'guideDataTableTitle' as const,
+    icon: crumbIcons.dataTable,
   },
   layout: {
     path: '/packages/layout',

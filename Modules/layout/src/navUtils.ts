@@ -2,6 +2,11 @@ import type { LayoutNavItem } from './types'
 
 /** Shared path helpers only — no UI. Used by vertical and horizontal sidebars. */
 
+/** Non-interactive visual divider — never active, never a link. */
+export function isSeparatorItem(item: LayoutNavItem): boolean {
+  return item.kind === 'separator'
+}
+
 export function isPathActive(currentPath: string, itemPath?: string) {
   if (!itemPath) {
     return false
@@ -15,6 +20,9 @@ export function isPathActive(currentPath: string, itemPath?: string) {
 }
 
 export function isGroupActive(item: LayoutNavItem, currentPath: string): boolean {
+  if (isSeparatorItem(item)) {
+    return false
+  }
   if (item.path && isPathActive(currentPath, item.path)) {
     return true
   }
@@ -33,6 +41,7 @@ export function getInitialExpandedGroups(
   const next: Record<string, boolean> = {}
 
   for (const item of navigation) {
+    if (isSeparatorItem(item)) continue
     if (item.children && isGroupActive(item, pathname)) {
       next[item.key] = true
     }

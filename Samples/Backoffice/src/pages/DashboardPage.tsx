@@ -2,6 +2,7 @@
 import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined'
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined'
 import DynamicFormOutlinedIcon from '@mui/icons-material/DynamicFormOutlined'
+import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined'
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined'
 import WebAssetOutlinedIcon from '@mui/icons-material/WebAssetOutlined'
 import { Button, Grid, Paper, Stack, Typography } from '@mui/material'
@@ -119,6 +120,14 @@ export function DashboardPage() {
               description={t('guidePageBlurb')}
               to="/packages/page"
               icon={<WebAssetOutlinedIcon fontSize="small" />}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <PackageCard
+              title="@raccoonland/data-table"
+              description={t('guideDataTableBlurb')}
+              to="/packages/data-table"
+              icon={<TableChartOutlinedIcon fontSize="small" />}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>

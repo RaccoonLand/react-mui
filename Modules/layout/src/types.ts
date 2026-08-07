@@ -3,7 +3,17 @@ import type { ReactNode } from 'react'
 import type { SidebarOrientation } from './sidebarOrientation'
 import type { SidebarVerticalDensity } from './sidebarVerticalDensity'
 
-/** Navigation node — apps resolve i18n into `label` before passing. */
+/**
+ * Navigation node — apps resolve i18n into `label` before passing.
+ *
+ * `kind`:
+ * - `'link'` (default when omitted) — behaves as a `NavLink` (or a group when `children` are present).
+ * - `'separator'` — non-interactive visual divider used to group subsystems in the sidebar.
+ *   Renders `label` and/or `icon` when provided (both optional), or a plain rule when neither
+ *   is set. Separators are **not** focusable, **not** selectable, have no active/selected
+ *   styling, and never render as a link — `path`, `children`, `badge` are ignored.
+ *   Visually smaller than link rows so they are clearly not clickable.
+ */
 export type LayoutNavItem = {
   key: string
   label: string
@@ -11,6 +21,7 @@ export type LayoutNavItem = {
   icon?: SvgIconComponent
   badge?: number
   children?: LayoutNavItem[]
+  kind?: 'link' | 'separator'
 }
 
 export type LayoutBrand = {

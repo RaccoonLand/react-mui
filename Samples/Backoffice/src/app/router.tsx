@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { BackofficeLayout } from '../layout/BackofficeLayout'
 import { DashboardPage } from '../pages/DashboardPage'
+import { DataTableGuidePage } from '../pages/guides/DataTableGuidePage'
 import { FeedbackGuidePage } from '../pages/guides/FeedbackGuidePage'
 import { FormKitGuidePage } from '../pages/guides/FormKitGuidePage'
 import { LayoutGuidePage } from '../pages/guides/LayoutGuidePage'
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
       { path: '/packages/feedback', element: <FeedbackGuidePage /> },
       { path: '/packages/form-kit', element: <FormKitGuidePage /> },
       { path: '/packages/page', element: <PageGuidePage /> },
+      { path: '/packages/data-table', element: <DataTableGuidePage /> },
       { path: '/packages/layout', element: <LayoutGuidePage /> },
       { path: '/settings', element: <Navigate to="/settings/layout" replace /> },
       { path: '/settings/layout', element: <LayoutSettingsPage /> },

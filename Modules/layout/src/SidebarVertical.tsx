@@ -31,6 +31,7 @@ import {
   getInitialExpandedGroups,
   hasActiveDescendant,
   isPathActive,
+  isSeparatorItem,
 } from './navUtils'
 import type { SidebarVerticalDensity } from './sidebarVerticalDensity'
 import type { LayoutNavItem } from './types'
@@ -256,6 +257,75 @@ function GroupFlyout({
         })}
       </Menu>
     </>
+  )
+}
+
+/**
+ * Non-interactive section divider — no NavLink, no hover, no selected state.
+ * `label` and `icon` are both optional. Renders a thin rule with an optional
+ * inline caption; visibly smaller than link rows.
+ */
+function NavSeparator({
+  item,
+  density,
+}: {
+  item: LayoutNavItem
+  density: SidebarVerticalDensity
+}) {
+  const raccoon = useRaccoonTheme()
+  const Icon = item.icon
+  const isCollapsed = density === 'collapsed'
+  const isCompact = density === 'compact'
+  const showLabel = !isCollapsed && Boolean(item.label)
+  const showIcon = !isCollapsed && Boolean(Icon)
+  const rule = `1px solid ${raccoon.border.subtle}`
+
+  return (
+    <Box
+      role="separator"
+      aria-label={item.label || undefined}
+      sx={{
+        // Smaller than link rows on purpose so it can't be mistaken for an item.
+        mt: 1,
+        mb: 0.5,
+        px: isCollapsed ? 0.75 : 1,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.75,
+        color: 'text.disabled',
+        userSelect: 'none',
+        cursor: 'default',
+      }}
+    >
+      {isCollapsed ? (
+        <Box sx={{ flex: 1, height: 0, borderTop: rule }} />
+      ) : showLabel || showIcon ? (
+        <>
+          {showIcon && Icon && <Icon sx={{ fontSize: 12, color: 'inherit' }} />}
+          {showLabel && (
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: isCompact ? 9.5 : 10.5,
+                lineHeight: 1,
+                fontWeight: 700,
+                letterSpacing: 0.8,
+                textTransform: 'uppercase',
+                color: 'inherit',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {item.label}
+            </Typography>
+          )}
+          <Box sx={{ flex: 1, height: 0, borderTop: rule }} />
+        </>
+      ) : (
+        <Box sx={{ flex: 1, height: 0, borderTop: rule }} />
+      )}
+    </Box>
   )
 }
 
@@ -530,17 +600,21 @@ export function SidebarVertical({
         }}
       >
         <List disablePadding sx={{ paddingInline: isCompact ? 0.5 : 0.75 }}>
-          {navigation.map((item) => (
-            <NavNode
-              key={item.key}
-              item={item}
-              depth={0}
-              density={density}
-              expandedGroups={expandedGroups}
-              onToggleGroup={toggleGroup}
-              onNavigate={onNavigate}
-            />
-          ))}
+          {navigation.map((item) =>
+            isSeparatorItem(item) ? (
+              <NavSeparator key={item.key} item={item} density={density} />
+            ) : (
+              <NavNode
+                key={item.key}
+                item={item}
+                depth={0}
+                density={density}
+                expandedGroups={expandedGroups}
+                onToggleGroup={toggleGroup}
+                onNavigate={onNavigate}
+              />
+            ),
+          )}
         </List>
       </Box>
 
