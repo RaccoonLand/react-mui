@@ -22,10 +22,13 @@ export function DataTable<T>({
   onPageSizeChange,
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   cardBreakpoint = 'md',
+  cardColumns,
   viewMode = 'auto',
   renderCard,
   loading = false,
   emptyContent,
+  emptyIcon,
+  emptyMessage,
   labels,
   dense,
   maxHeight,
@@ -87,8 +90,11 @@ export function DataTable<T>({
             labels={labels}
             dense={dense}
             emptyContent={emptyContent}
+            emptyIcon={emptyIcon}
+            emptyMessage={emptyMessage}
             renderCard={renderCard}
             maxHeight={maxHeight}
+            cardColumns={cardColumns}
             contextMenu={contextMenu}
             checkboxSelection={checkboxSelection}
             selectedRowIds={selectedRowIds}
@@ -106,6 +112,8 @@ export function DataTable<T>({
             labels={labels}
             dense={dense}
             emptyContent={emptyContent}
+            emptyIcon={emptyIcon}
+            emptyMessage={emptyMessage}
             maxHeight={maxHeight}
             loading={loading}
             checkboxSelection={checkboxSelection}

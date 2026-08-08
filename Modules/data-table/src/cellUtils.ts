@@ -1,5 +1,11 @@
+import type { Breakpoint } from '@mui/material'
 import type { ReactNode } from 'react'
-import type { DataTableCardField, DataTableColumn, DataTableViewMode } from './types'
+import type {
+  DataTableCardColumns,
+  DataTableCardField,
+  DataTableColumn,
+  DataTableViewMode,
+} from './types'
 
 export function isDataTableCardView(
   viewMode: DataTableViewMode,
@@ -8,6 +14,61 @@ export function isDataTableCardView(
   if (viewMode === 'cards') return true
   if (viewMode === 'table') return false
   return isBelowBreakpoint
+}
+
+/** Clamp to a positive integer column count (minimum 1). */
+export function normalizeCardColumnCount(value: number): number {
+  if (!Number.isFinite(value)) return 1
+  return Math.max(1, Math.floor(value))
+}
+
+function cardColumnTrack(count: number): string {
+  const n = normalizeCardColumnCount(count)
+  return n === 1 ? '1fr' : `repeat(${n}, minmax(0, 1fr))`
+}
+
+/**
+ * Builds `gridTemplateColumns` sx for the card list.
+ * Default / omitted → single column. Number → fixed. Breakpoint map → responsive
+ * (missing `xs` falls back to one column so narrow viewports stay readable).
+ */
+export function buildCardColumnsGridSx(cardColumns?: DataTableCardColumns): {
+  display: 'grid'
+  gap: number
+  gridTemplateColumns: string | Partial<Record<Breakpoint, string>>
+} {
+  if (cardColumns == null) {
+    return {
+      display: 'grid',
+      gap: 1.5,
+      gridTemplateColumns: '1fr',
+    }
+  }
+
+  if (typeof cardColumns === 'number') {
+    return {
+      display: 'grid',
+      gap: 1.5,
+      gridTemplateColumns: cardColumnTrack(cardColumns),
+    }
+  }
+
+  const template: Partial<Record<Breakpoint, string>> = {}
+  for (const key of Object.keys(cardColumns) as Breakpoint[]) {
+    const raw = cardColumns[key]
+    if (raw == null) continue
+    template[key] = cardColumnTrack(raw)
+  }
+
+  if (template.xs == null) {
+    template.xs = '1fr'
+  }
+
+  return {
+    display: 'grid',
+    gap: 1.5,
+    gridTemplateColumns: template,
+  }
 }
 
 export function alignToTableAlign(

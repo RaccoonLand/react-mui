@@ -1,4 +1,5 @@
-import { Box, Typography, useTheme } from '@mui/material'
+import type { SvgIconComponent } from '@mui/icons-material'
+import { Box, useTheme } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import {
   DataGrid,
@@ -17,6 +18,7 @@ import {
   DataTableContextMenu,
   type DataTableContextMenuState,
 } from './DataTableContextMenu'
+import { resolveDataTableEmptyNode } from './DataTableEmptyState'
 import type {
   DataTableAction,
   DataTableColumn,
@@ -38,6 +40,8 @@ export type DataTableGridProps<T> = {
   labels: DataTableLabels
   dense?: boolean
   emptyContent?: ReactNode
+  emptyIcon?: SvgIconComponent
+  emptyMessage?: ReactNode
   maxHeight?: number | string
   loading?: boolean
   checkboxSelection?: boolean
@@ -105,6 +109,8 @@ export function DataTableGrid<T>({
   labels,
   dense,
   emptyContent,
+  emptyIcon,
+  emptyMessage,
   maxHeight,
   loading = false,
   checkboxSelection = false,
@@ -354,11 +360,7 @@ export function DataTableGrid<T>({
                 py: 4,
               }}
             >
-              {emptyContent ?? (
-                <Typography color="text.secondary" variant="body2">
-                  —
-                </Typography>
-              )}
+              {resolveDataTableEmptyNode({ emptyContent, emptyIcon, emptyMessage })}
             </Box>
           ),
         }}

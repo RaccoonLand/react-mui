@@ -1,6 +1,7 @@
 export type {
   DataTableAction,
   DataTableAlign,
+  DataTableCardColumns,
   DataTableCardField,
   DataTableCardRenderContext,
   DataTableColumn,
@@ -15,4 +16,13 @@ export type {
 } from './types'
 
 export { DataTable } from './DataTable'
-export { isDataTableCardView } from './cellUtils'
+export {
+  DataTableEmptyState,
+  resolveDataTableEmptyNode,
+} from './DataTableEmptyState'
+export type { DataTableEmptyStateProps } from './DataTableEmptyState'
+export {
+  buildCardColumnsGridSx,
+  isDataTableCardView,
+  normalizeCardColumnCount,
+} from './cellUtils'

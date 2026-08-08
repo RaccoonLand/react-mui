@@ -21,7 +21,7 @@ import {
   ToggleButtonGroup,
   Typography,
 } from '@mui/material'
-import { DataTable, type DataTableSortModel, type DataTableViewMode } from '@raccoonland/data-table'
+import { DataTable, type DataTableCardColumns, type DataTableSortModel, type DataTableViewMode } from '@raccoonland/data-table'
 import { Page } from '@raccoonland/page'
 import { useRaccoonTheme } from '@raccoonland/theme'
 import { useMemo, useState, type ReactNode } from 'react'
@@ -135,6 +135,9 @@ import CopyIcon from '@mui/icons-material/ContentCopy'
   onPageSizeChange={(s) => { setPageSize(s); setPage(0) }}
   viewMode="auto"           // auto | table | cards
   cardBreakpoint="md"
+  // optional: multi-column cards (default is 1 column)
+  // cardColumns={2}
+  // cardColumns={{ xs: 1, sm: 2, md: 3 }}
   maxHeight={360}
   dense
   loading={isFetching}
@@ -145,7 +148,9 @@ import CopyIcon from '@mui/icons-material/ContentCopy'
   sortingMode="server"
   sortModel={sortModel}
   onSortModelChange={(model) => { setSortModel(model); setPage(0) }}
-  emptyContent={<EmptyState />}
+  emptyMessage={t('noRows')}   // optional; omit → icon-only fallback
+  // emptyIcon={SearchOffIcon} // optional
+  // emptyContent={<CustomEmpty />} // full override
   renderCard={({ title, fields, actionNodes, row, selectionControl }) => (/* custom card */)}
   labels={{
     rowsPerPage: t('rowsPerPage'),
@@ -165,6 +170,7 @@ export function DataTableGuidePage() {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [viewMode, setViewMode] = useState<DataTableViewMode>('auto')
+  const [cardColumnsMode, setCardColumnsMode] = useState<'1' | '2' | 'responsive'>('1')
   const [lastAction, setLastAction] = useState('')
   const [customCards, setCustomCards] = useState(true)
   const [dense, setDense] = useState(true)
@@ -197,6 +203,12 @@ export function DataTableGuidePage() {
     }),
     [t],
   )
+
+  const cardColumns = useMemo((): DataTableCardColumns | undefined => {
+    if (cardColumnsMode === '1') return undefined
+    if (cardColumnsMode === '2') return 2
+    return { xs: 1, sm: 2, md: 3 }
+  }, [cardColumnsMode])
 
   const sourceRows = showEmpty ? [] : DEMO_ROWS
   const totalCount = showEmpty ? 0 : DEMO_TOTAL
@@ -255,6 +267,19 @@ export function DataTableGuidePage() {
                 <ToggleButton value="auto">{t('guideDataTableViewAuto')}</ToggleButton>
                 <ToggleButton value="table">{t('guideDataTableViewTable')}</ToggleButton>
                 <ToggleButton value="cards">{t('guideDataTableViewCards')}</ToggleButton>
+              </ToggleButtonGroup>
+
+              <ToggleButtonGroup
+                exclusive
+                size="small"
+                value={cardColumnsMode}
+                onChange={(_e, next: '1' | '2' | 'responsive' | null) => {
+                  if (next) setCardColumnsMode(next)
+                }}
+              >
+                <ToggleButton value="1">{t('guideDataTableCardCols1')}</ToggleButton>
+                <ToggleButton value="2">{t('guideDataTableCardCols2')}</ToggleButton>
+                <ToggleButton value="responsive">{t('guideDataTableCardColsResponsive')}</ToggleButton>
               </ToggleButtonGroup>
 
               <ToggleButtonGroup
@@ -380,6 +405,7 @@ export function DataTableGuidePage() {
             getRowId={(r) => r.id}
             viewMode={viewMode}
             cardBreakpoint="md"
+            cardColumns={cardColumns}
             maxHeight={useMaxHeight ? 360 : undefined}
             pageSizeOptions={PAGE_SIZE_OPTIONS}
             maxInlineActions={maxInlineActions}
@@ -414,11 +440,7 @@ export function DataTableGuidePage() {
                 },
               ],
             }}
-            emptyContent={
-              <Typography color="text.secondary" variant="body2">
-                {t('guideDataTableEmptyContent')}
-              </Typography>
-            }
+            emptyMessage={t('guideDataTableEmptyContent')}
             columns={[
               {
                 id: 'rowNumber',

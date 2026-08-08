@@ -1,8 +1,10 @@
+import type { SvgIconComponent } from '@mui/icons-material'
 import { Box, Card, CardActions, CardContent, Checkbox, Stack, Typography } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import { useRaccoonTheme } from '@raccoonland/theme'
 import { useCallback, useMemo, useState, type MouseEvent, type ReactNode } from 'react'
 import {
+  buildCardColumnsGridSx,
   buildCardFields,
   getCellValue,
   resolvePrimaryColumn,
@@ -12,8 +14,10 @@ import {
   DataTableContextMenu,
   type DataTableContextMenuState,
 } from './DataTableContextMenu'
+import { resolveDataTableEmptyNode } from './DataTableEmptyState'
 import type {
   DataTableAction,
+  DataTableCardColumns,
   DataTableCardRenderContext,
   DataTableColumn,
   DataTableContextMenuConfig,
@@ -29,8 +33,12 @@ export type DataTableCardsProps<T> = {
   labels: DataTableLabels
   dense?: boolean
   emptyContent?: ReactNode
+  emptyIcon?: SvgIconComponent
+  emptyMessage?: ReactNode
   renderCard?: (ctx: DataTableCardRenderContext<T>) => ReactNode
   maxHeight?: number | string
+  /** Optional card grid columns; default single column. */
+  cardColumns?: DataTableCardColumns
   contextMenu?: DataTableContextMenuConfig
   checkboxSelection?: boolean
   selectedRowIds?: Array<string | number>
@@ -103,8 +111,11 @@ export function DataTableCards<T>({
   labels,
   dense,
   emptyContent,
+  emptyIcon,
+  emptyMessage,
   renderCard,
   maxHeight,
+  cardColumns,
   contextMenu,
   checkboxSelection = false,
   selectedRowIds,
@@ -114,6 +125,7 @@ export function DataTableCards<T>({
 }: DataTableCardsProps<T>) {
   const raccoon = useRaccoonTheme()
   const primary = resolvePrimaryColumn(columns)
+  const cardGridSx = useMemo(() => buildCardColumnsGridSx(cardColumns), [cardColumns])
 
   const contextEnabled = contextMenu?.enabled ?? false
   const showRowContext = contextEnabled && contextMenu?.row !== false
@@ -222,11 +234,7 @@ export function DataTableCards<T>({
         sx={{ py: 4, textAlign: 'center' }}
         onContextMenuCapture={contextEnabled ? handleCapture : undefined}
       >
-        {emptyContent ?? (
-          <Typography color="text.secondary" variant="body2">
-            —
-          </Typography>
-        )}
+        {resolveDataTableEmptyNode({ emptyContent, emptyIcon, emptyMessage })}
         <DataTableContextMenu
           state={menuState}
           onClose={() => setMenuState(null)}
@@ -270,7 +278,7 @@ export function DataTableCards<T>({
         </Box>
       ) : null}
 
-      <Stack spacing={1.5}>
+      <Box sx={cardGridSx}>
         {rows.map((row, index) => {
           const rowId = getRowId(row)
           const rowIdKey = String(rowId)
@@ -332,12 +340,16 @@ export function DataTableCards<T>({
                     ? alpha(raccoon.primary.main, 0.35)
                     : raccoon.border.subtle,
                 flexShrink: 0,
+                minWidth: 0,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
               {renderCard ? (
                 renderCard(ctx)
               ) : (
-                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', flex: 1, minHeight: 0 }}>
                   {selectionControl ? (
                     <Box sx={{ pl: 0.75, pt: dense ? 1 : 1.25 }}>{selectionControl}</Box>
                   ) : null}
@@ -354,7 +366,7 @@ export function DataTableCards<T>({
             </Card>
           )
         })}
-      </Stack>
+      </Box>
       <DataTableContextMenu
         state={menuState}
         onClose={() => setMenuState(null)}

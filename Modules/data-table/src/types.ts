@@ -120,6 +120,14 @@ export type DataTableCardRenderContext<T> = {
 
 export type DataTableViewMode = 'auto' | 'table' | 'cards'
 
+/**
+ * How many cards per row in card view.
+ * - `number` — fixed column count at every width (default behavior when omitted is `1`).
+ * - breakpoint map — responsive columns, e.g. `{ xs: 1, sm: 2, md: 3 }`.
+ *   Omitted smaller breakpoints default to a single column (`xs: 1`) so the grid always has a base.
+ */
+export type DataTableCardColumns = number | Partial<Record<Breakpoint, number>>
+
 export type DataTableProps<T> = {
   rows: T[]
   getRowId: (row: T) => string | number
@@ -138,7 +146,17 @@ export type DataTableProps<T> = {
   onPageSizeChange: (pageSize: number) => void
   pageSizeOptions?: number[]
 
+  /**
+   * Viewport threshold for `viewMode="auto"`: cards below this breakpoint, table at/above.
+   * Default `'md'`. Independent of `cardColumns`.
+   */
   cardBreakpoint?: Breakpoint | number
+  /**
+   * Card grid density in card view. Default `1` (single column).
+   * Pass a number for a fixed multi-column layout, or a breakpoint map for responsive columns.
+   * Does not affect when table vs cards is chosen — that remains `cardBreakpoint` / `viewMode`.
+   */
+  cardColumns?: DataTableCardColumns
   viewMode?: DataTableViewMode
   /**
    * Customize card layout per row. Receives default `title`, `fields`, and
@@ -147,7 +165,21 @@ export type DataTableProps<T> = {
   renderCard?: (ctx: DataTableCardRenderContext<T>) => ReactNode
 
   loading?: boolean
+  /**
+   * Full custom empty body (table overlay + cards). When set, overrides
+   * `emptyIcon` / `emptyMessage`. Prefer those for simple icon + text.
+   */
   emptyContent?: ReactNode
+  /**
+   * Empty-state icon when `emptyContent` is omitted.
+   * Default: `InboxOutlined`. Fallback with no message shows **icon only**.
+   */
+  emptyIcon?: SvgIconComponent
+  /**
+   * Optional empty-state text under the icon (host i18n).
+   * When omitted (and `emptyContent` is omitted), only the icon is shown.
+   */
+  emptyMessage?: ReactNode
   labels: DataTableLabels
   dense?: boolean
   /** Max height for the scrollable table/cards body (header stays sticky in table mode). */
