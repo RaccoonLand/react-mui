@@ -4,6 +4,8 @@ export type ConfirmOptions = {
   confirmText?: string
   cancelText?: string
   destructive?: boolean
+  /** When true, the confirm dialog title bar can be dragged (sm+). */
+  draggable?: boolean
 }
 
 type ConfirmRequest = ConfirmOptions & {

@@ -343,10 +343,11 @@ export function LayoutHeader({
                 sx={{ p: 0.25 }}
               >
                 <Avatar
+                  src={user.info?.avatarUrl?.trim() || undefined}
                   sx={{
                     width: 30,
                     height: 30,
-                    bgcolor: 'primary.dark',
+                    bgcolor: user.info?.avatarUrl?.trim() ? 'transparent' : 'primary.dark',
                     fontSize: 12,
                     fontWeight: 700,
                   }}

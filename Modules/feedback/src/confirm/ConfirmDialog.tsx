@@ -20,6 +20,7 @@ export function ConfirmDialog({ state, onClose }: ConfirmDialogProps) {
       variant="emphasis"
       showCloseButton={false}
       dividers={false}
+      draggable={state?.draggable}
       title={
         state ? (
           <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>

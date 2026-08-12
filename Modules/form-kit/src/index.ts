@@ -22,6 +22,12 @@ export type { FormRadioGroupProps } from './FormRadioGroup'
 export { FormAutocomplete } from './FormAutocomplete'
 export type { FormAutocompleteProps } from './FormAutocomplete'
 
+export { FormAsyncAutocomplete } from './FormAsyncAutocomplete'
+export type {
+  FormAsyncAutocompleteProps,
+  FormAsyncLoadOptions,
+} from './FormAsyncAutocomplete'
+
 export { FormSlider } from './FormSlider'
 export type { FormSliderProps } from './FormSlider'
 

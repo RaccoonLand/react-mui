@@ -1,6 +1,6 @@
 {
   "name": "@raccoonland/form-kit",
-  "version": "0.4.3",
+  "version": "0.4.6",
   "description": "React Hook Form + MUI binding controls",
   "type": "module",
   "main": "./dist/index.js",

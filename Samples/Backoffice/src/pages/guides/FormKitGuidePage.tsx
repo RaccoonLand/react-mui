@@ -1,5 +1,6 @@
 import { Alert, Button, MenuItem, Paper, Stack, Typography } from '@mui/material'
 import {
+  FormAsyncAutocomplete,
   FormAutocomplete,
   FormCheckbox,
   FormCheckboxGroup,
@@ -36,6 +37,7 @@ type FormKitDemoValues = {
   status: number | ''
   tags: string[]
   city: string | null
+  asyncCity: string | null
   volume: number
   rating: number | null
   dueDate: string | null
@@ -61,6 +63,7 @@ const emptyDefaults: FormKitDemoValues = {
   status: '',
   tags: [],
   city: null,
+  asyncCity: null,
   volume: 40,
   rating: 3,
   dueDate: null,
@@ -81,6 +84,7 @@ const emptyDefaults: FormKitDemoValues = {
 }
 
 const FORM_KIT_USAGE_CODE = `import {
+  FormAsyncAutocomplete,
   FormAutocomplete,
   FormCheckboxGroup,
   FormChipInput,
@@ -101,6 +105,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 
 type Values = {
   city: string | null
+  asyncCity: string | null
   volume: number
   rating: number | null
   dueDate: string | null
@@ -129,6 +134,14 @@ export function ExtendedForm() {
               { value: 'teh', label: 'Tehran' },
               { value: 'isf', label: 'Isfahan' },
             ]}
+          />
+          <FormAsyncAutocomplete<Values>
+            name="asyncCity"
+            label="City (server)"
+            loadOptions={async (query, signal) => {
+              const rows = await api.searchCities(query, { signal })
+              return rows.map((row) => ({ value: row.id, label: row.name }))
+            }}
           />
           <FormSlider<Values> name="volume" label="Volume" sliderProps={{ min: 0, max: 100 }} />
           <FormRating<Values> name="rating" label="Rating" />
@@ -261,6 +274,27 @@ export function FormKitGuidePage() {
                       label={t('formKitCity')}
                       options={cityOptions}
                       textFieldProps={{ fullWidth: true }}
+                    />
+                    <FormAsyncAutocomplete<FormKitDemoValues>
+                      name="asyncCity"
+                      label={t('formKitAsyncCity')}
+                      textFieldProps={{ fullWidth: true }}
+                      loadOptions={async (query, signal) => {
+                        await new Promise((resolve) => {
+                          const timer = window.setTimeout(resolve, 350)
+                          signal.addEventListener('abort', () => window.clearTimeout(timer))
+                        })
+                        if (signal.aborted) {
+                          return []
+                        }
+                        const q = query.trim().toLowerCase()
+                        return cityOptions.filter(
+                          (option) =>
+                            !q ||
+                            option.label.toLowerCase().includes(q) ||
+                            String(option.value).includes(q),
+                        )
+                      }}
                     />
                     <FormSlider<FormKitDemoValues>
                       name="volume"

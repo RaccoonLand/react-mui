@@ -8,4 +8,5 @@ export { ConfirmProvider, useConfirm } from './confirm/ConfirmProvider'
 export type { ConfirmOptions } from './confirm/types'
 
 export { AppDialog } from './overlay/AppDialog'
+export type { AppDialogProps } from './overlay/AppDialog'
 export { AppDrawer } from './overlay/AppDrawer'

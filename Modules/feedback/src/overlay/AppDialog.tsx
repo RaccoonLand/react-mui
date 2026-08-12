@@ -6,16 +6,19 @@ import {
   DialogTitle,
   IconButton,
   Typography,
+  useMediaQuery,
   type DialogProps,
+  type PaperProps,
   type SxProps,
   type Theme,
 } from '@mui/material'
-import { useEffect, type ReactNode } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useRaccoonTheme } from '@raccoonland/theme'
+import { APP_DIALOG_DRAG_HANDLE_ATTR, DraggablePaper } from './DraggablePaper'
 
 type AppDialogVariant = 'default' | 'emphasis'
 
-type AppDialogProps = {
+export type AppDialogProps = {
   open: boolean
   onClose: () => void
   title: ReactNode
@@ -31,6 +34,17 @@ type AppDialogProps = {
   contentSx?: SxProps<Theme>
   onConfirm?: () => void
   disableRestoreFocus?: boolean
+  /**
+   * When true, the dialog can be moved by dragging the title bar.
+   * Disabled automatically below the `sm` breakpoint.
+   */
+  draggable?: boolean
+  /**
+   * When true, clicking the backdrop calls `onClose`.
+   * Default `false` — Escape / header close / actions still dismiss.
+   * (AppDialog's `onClose` has no MUI `reason`, so hosts cannot filter this themselves.)
+   */
+  closeOnBackdropClick?: boolean
 }
 
 function isTypingTarget(target: EventTarget | null) {
@@ -70,8 +84,13 @@ export function AppDialog({
   contentSx,
   onConfirm,
   disableRestoreFocus = false,
+  draggable = false,
+  closeOnBackdropClick = false,
 }: AppDialogProps) {
   const raccoon = useRaccoonTheme()
+  const isNarrow = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
+  const dragEnabled = draggable && !isNarrow
+  const [backdropDenyPulse, setBackdropDenyPulse] = useState(false)
 
   const paperSx =
     variant === 'emphasis'
@@ -84,6 +103,21 @@ export function AppDialog({
           bgcolor: raccoon.background.elevated,
           border: `1px solid ${raccoon.border.subtle}`,
         }
+
+  useEffect(() => {
+    if (!open) {
+      setBackdropDenyPulse(false)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!backdropDenyPulse) {
+      return
+    }
+
+    const timer = window.setTimeout(() => setBackdropDenyPulse(false), 320)
+    return () => window.clearTimeout(timer)
+  }, [backdropDenyPulse])
 
   useEffect(() => {
     if (!open || !onConfirm) {
@@ -113,19 +147,72 @@ export function AppDialog({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onConfirm, open])
 
+  const pulseBackdropDeny = useCallback(() => {
+    setBackdropDenyPulse(false)
+    window.requestAnimationFrame(() => setBackdropDenyPulse(true))
+  }, [])
+
+  const PaperComponent = useCallback(
+    (props: PaperProps) => <DraggablePaper {...props} resetKey={open} />,
+    [open],
+  )
+
+  const lockedPulseSx = {
+    animation: 'appDialogBackdropDeny 300ms ease',
+    '@keyframes appDialogBackdropDeny': {
+      '0%, 100%': {
+        boxShadow:
+          variant === 'emphasis' ? `0 0 32px ${raccoon.border.glow}` : 'none',
+        borderColor: variant === 'emphasis' ? raccoon.border.glow : raccoon.border.subtle,
+      },
+      '40%': {
+        boxShadow: `0 0 0 3px ${raccoon.border.glow}, 0 0 28px ${raccoon.border.glow}`,
+        borderColor: raccoon.border.glow,
+      },
+    },
+  } satisfies SxProps<Theme>
+
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={(_event, reason) => {
+        if (reason === 'backdropClick' && !closeOnBackdropClick) {
+          pulseBackdropDeny()
+          return
+        }
+        onClose()
+      }}
       maxWidth={maxWidth}
       fullWidth={fullWidth}
       scroll={scroll}
       disableRestoreFocus={disableRestoreFocus}
-      PaperProps={{ sx: paperSx }}
+      PaperComponent={dragEnabled ? PaperComponent : undefined}
+      PaperProps={{
+        sx: backdropDenyPulse ? [paperSx, lockedPulseSx] : paperSx,
+      }}
+      slotProps={
+        !closeOnBackdropClick
+          ? {
+              backdrop: {
+                // Visual lock cue lives on the paper (pulse). Avoid animating backdrop
+                // opacity — it fights MUI Fade's inline opacity.
+                sx: { cursor: 'default' },
+              },
+            }
+          : undefined
+      }
     >
       <DialogTitle
+        {...(dragEnabled ? { [APP_DIALOG_DRAG_HANDLE_ATTR]: '' } : undefined)}
         sx={{
           ...(showCloseButton ? { paddingInlineEnd: 6 } : undefined),
+          ...(dragEnabled
+            ? {
+                cursor: 'move',
+                userSelect: 'none',
+                touchAction: 'none',
+              }
+            : undefined),
         }}
       >
         {typeof title === 'string' ? (

@@ -80,6 +80,11 @@ export type DataTableContextMenuConfig = {
 export type DataTableLabels = {
   rowsPerPage: string
   displayedRows: (from: number, to: number, count: number) => string
+  /**
+   * Optional number formatter for pagination chrome (page-size menu + page buttons).
+   * Host uses this for localized digits (e.g. Persian). When omitted, Western digits are shown.
+   */
+  formatNumber?: (n: number) => string
   /** Actions column header / card actions region label */
   labelActions?: string
   /** Tooltip / aria for the overflow “more” control */

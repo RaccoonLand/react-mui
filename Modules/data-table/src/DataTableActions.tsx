@@ -9,6 +9,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { useId, useState, type MouseEvent } from 'react'
+import { actionMenuIconSx, actionMenuTextColor } from './actionColorUtils'
 import type { DataTableAction } from './types'
 
 const DEFAULT_MAX_INLINE = 2
@@ -108,6 +109,8 @@ export function DataTableActions<T>({
             {overflow.map((action) => {
               const Icon = action.icon
               const disabled = action.disabled?.(row) ?? false
+              const iconSx = actionMenuIconSx(action.color)
+              const textColor = actionMenuTextColor(action.color)
               return (
                 <MenuItem
                   key={action.key}
@@ -118,14 +121,14 @@ export function DataTableActions<T>({
                   }}
                 >
                   {Icon ? (
-                    <ListItemIcon sx={{ color: action.color === 'error' ? 'error.main' : undefined }}>
+                    <ListItemIcon sx={iconSx}>
                       <Icon fontSize="small" />
                     </ListItemIcon>
                   ) : null}
                   <ListItemText
                     primary={action.label}
                     primaryTypographyProps={{
-                      color: action.color === 'error' ? 'error' : undefined,
+                      color: textColor,
                     }}
                   />
                 </MenuItem>

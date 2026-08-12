@@ -1,6 +1,6 @@
 {
   "name": "@raccoonland/layout",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Backoffice shell: vertical/horizontal navigation, header, layout settings",
   "type": "module",
   "main": "./dist/index.js",

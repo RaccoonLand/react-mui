@@ -6,6 +6,7 @@ import {
   MenuItem,
 } from '@mui/material'
 import { useRef, type MouseEvent as ReactMouseEvent } from 'react'
+import { actionMenuIconSx, actionMenuTextColor } from './actionColorUtils'
 import type { DataTableAction, DataTableTableMenuItem } from './types'
 
 export type DataTableContextMenuState<T> = {
@@ -98,6 +99,8 @@ export function DataTableContextMenu<T>({
       {visibleRowActions.map((action) => {
         const Icon = action.icon
         const disabled = action.disabled?.(row as T) ?? false
+        const iconSx = actionMenuIconSx(action.color)
+        const textColor = actionMenuTextColor(action.color)
         return (
           <MenuItem
             key={`row-${action.key}`}
@@ -108,14 +111,14 @@ export function DataTableContextMenu<T>({
             }}
           >
             {Icon ? (
-              <ListItemIcon sx={{ color: action.color === 'error' ? 'error.main' : undefined }}>
+              <ListItemIcon sx={iconSx}>
                 <Icon fontSize="small" />
               </ListItemIcon>
             ) : null}
             <ListItemText
               primary={action.label}
               primaryTypographyProps={{
-                color: action.color === 'error' ? 'error' : undefined,
+                color: textColor,
               }}
             />
           </MenuItem>
@@ -127,6 +130,8 @@ export function DataTableContextMenu<T>({
       {visibleTableItems.map((item) => {
         const Icon = item.icon
         const disabled = isTableItemDisabled(item)
+        const iconSx = actionMenuIconSx(item.color)
+        const textColor = actionMenuTextColor(item.color)
         return (
           <MenuItem
             key={`table-${item.key}`}
@@ -137,14 +142,14 @@ export function DataTableContextMenu<T>({
             }}
           >
             {Icon ? (
-              <ListItemIcon sx={{ color: item.color === 'error' ? 'error.main' : undefined }}>
+              <ListItemIcon sx={iconSx}>
                 <Icon fontSize="small" />
               </ListItemIcon>
             ) : null}
             <ListItemText
               primary={item.label}
               primaryTypographyProps={{
-                color: item.color === 'error' ? 'error' : undefined,
+                color: textColor,
               }}
             />
           </MenuItem>

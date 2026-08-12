@@ -82,6 +82,7 @@ export function FeedbackDemo() {
         onConfirm={() => setOpen(false)}
         title="Details"
         closeLabel="Close"
+        draggable
         actions={
           <>
             <button type="button" onClick={() => setOpen(false)}>Cancel</button>
@@ -223,6 +224,7 @@ export function FeedbackGuidePage() {
         onConfirm={() => setDialogOpen(false)}
         title="AppDialog demo"
         closeLabel={t('close')}
+        draggable
         actions={
           <>
             <Button onClick={() => setDialogOpen(false)}>{t('cancel')}</Button>
@@ -233,7 +235,8 @@ export function FeedbackGuidePage() {
         }
       >
         <Typography variant="body2">
-          Enter confirms when focus is not on a button. Focus Cancel + Enter cancels (native).
+          Drag the title bar to move (sm+). Enter confirms when focus is not on a button. Focus
+          Cancel + Enter cancels (native).
         </Typography>
       </AppDialog>
 

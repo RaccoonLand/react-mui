@@ -155,6 +155,7 @@ import CopyIcon from '@mui/icons-material/ContentCopy'
   labels={{
     rowsPerPage: t('rowsPerPage'),
     displayedRows: (from, to, count) => \`\${from}–\${to} / \${count}\`,
+    formatNumber: (n) => n.toLocaleString('fa-IR'), // optional localized digits
     labelActions: t('actions'),
     moreActions: t('more'),
     firstPage: t('first'),
@@ -165,7 +166,7 @@ import CopyIcon from '@mui/icons-material/ContentCopy'
 />`
 
 export function DataTableGuidePage() {
-  const { t, direction } = useLocale()
+  const { t, direction, locale } = useLocale()
   const raccoon = useRaccoonTheme()
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -187,21 +188,27 @@ export function DataTableGuidePage() {
   const [ctxTable, setCtxTable] = useState(true)
 
   const labels = useMemo(
-    () => ({
-      rowsPerPage: t('guideDataTableRowsPerPage'),
-      displayedRows: (from: number, to: number, count: number) =>
-        t('guideDataTableDisplayedRows')
-          .replace('{from}', String(from))
-          .replace('{to}', String(to))
-          .replace('{count}', String(count)),
-      labelActions: t('guideDataTableActions'),
-      moreActions: t('guideDataTableMoreActions'),
-      firstPage: t('guideDataTableFirstPage'),
-      lastPage: t('guideDataTableLastPage'),
-      nextPage: t('guideDataTableNextPage'),
-      previousPage: t('guideDataTablePreviousPage'),
-    }),
-    [t],
+    () => {
+      const formatNumber =
+        locale === 'fa' ? (n: number) => n.toLocaleString('fa-IR') : undefined
+      const digit = (n: number) => (formatNumber ? formatNumber(n) : String(n))
+      return {
+        rowsPerPage: t('guideDataTableRowsPerPage'),
+        displayedRows: (from: number, to: number, count: number) =>
+          t('guideDataTableDisplayedRows')
+            .replace('{from}', digit(from))
+            .replace('{to}', digit(to))
+            .replace('{count}', digit(count)),
+        formatNumber,
+        labelActions: t('guideDataTableActions'),
+        moreActions: t('guideDataTableMoreActions'),
+        firstPage: t('guideDataTableFirstPage'),
+        lastPage: t('guideDataTableLastPage'),
+        nextPage: t('guideDataTableNextPage'),
+        previousPage: t('guideDataTablePreviousPage'),
+      }
+    },
+    [locale, t],
   )
 
   const cardColumns = useMemo((): DataTableCardColumns | undefined => {

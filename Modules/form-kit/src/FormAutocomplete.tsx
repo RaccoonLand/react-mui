@@ -6,6 +6,7 @@ import {
 } from '@mui/material'
 import { Controller, useFormContext, type FieldPath, type FieldValues } from 'react-hook-form'
 import { getFieldErrorProps } from './fieldError'
+import { mergeRefs } from './mergeRefs'
 import type { FormControlNameProps, FormOption } from './types'
 
 type BaseAutocompleteProps<
@@ -109,22 +110,42 @@ export function FormAutocomplete<
 
               field.onChange((next as FormOption).value)
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                {...textFieldProps}
-                name={field.name}
-                inputRef={field.ref}
-                label={label}
-                placeholder={placeholder}
-                error={errorProps.error}
-                helperText={errorProps.helperText ?? textFieldProps?.helperText}
-                FormHelperTextProps={{
-                  ...textFieldProps?.FormHelperTextProps,
-                  ...errorProps.FormHelperTextProps,
-                }}
-              />
-            )}
+            renderInput={(params) => {
+              const {
+                inputProps: userInputProps,
+                InputProps: userInputPropsRoot,
+                inputRef: userInputRef,
+                ...restTextFieldProps
+              } = textFieldProps ?? {}
+
+              return (
+                <TextField
+                  {...params}
+                  {...restTextFieldProps}
+                  name={field.name}
+                  label={label}
+                  placeholder={placeholder}
+                  error={errorProps.error}
+                  helperText={errorProps.helperText ?? textFieldProps?.helperText}
+                  FormHelperTextProps={{
+                    ...textFieldProps?.FormHelperTextProps,
+                    ...errorProps.FormHelperTextProps,
+                  }}
+                  // Host `textFieldProps.inputProps` must merge — replacing params.inputProps
+                  // drops Autocomplete wiring and crashes (removeAttribute on null).
+                  inputProps={{
+                    ...params.inputProps,
+                    ...userInputProps,
+                  }}
+                  inputRef={mergeRefs(field.ref, userInputRef)}
+                  InputProps={{
+                    ...params.InputProps,
+                    ...userInputPropsRoot,
+                    ref: mergeRefs(params.InputProps.ref, userInputPropsRoot?.ref),
+                  }}
+                />
+              )
+            }}
           />
         )
       }}

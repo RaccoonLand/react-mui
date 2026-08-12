@@ -3,6 +3,7 @@ import {
   FormControl,
   MenuItem,
   Pagination,
+  PaginationItem,
   Select,
   Stack,
   Typography,
@@ -18,6 +19,10 @@ export type DataTablePaginationProps = {
   pageSizeOptions: number[]
   labels: DataTableLabels
   disabled?: boolean
+}
+
+function formatPageNumber(labels: DataTableLabels, n: number): string {
+  return labels.formatNumber ? labels.formatNumber(n) : String(n)
 }
 
 export function DataTablePagination({
@@ -70,11 +75,12 @@ export function DataTablePagination({
                 onPageSizeChange(Number(event.target.value))
               }}
               inputProps={{ 'aria-label': labels.rowsPerPage }}
+              renderValue={(selected) => formatPageNumber(labels, Number(selected))}
               sx={{ minWidth: 72 }}
             >
               {pageSizeOptions.map((option) => (
                 <MenuItem key={option} value={option}>
-                  {option}
+                  {formatPageNumber(labels, option)}
                 </MenuItem>
               ))}
             </Select>
@@ -106,12 +112,25 @@ export function DataTablePagination({
           onChange={(_event, nextPage) => {
             onPageChange(nextPage - 1)
           }}
-          getItemAriaLabel={(type) => {
+          getItemAriaLabel={(type, pageNumber) => {
             if (type === 'first') return labels.firstPage ?? 'First page'
             if (type === 'last') return labels.lastPage ?? 'Last page'
             if (type === 'next') return labels.nextPage ?? 'Next page'
             if (type === 'previous') return labels.previousPage ?? 'Previous page'
+            if (type === 'page' && pageNumber != null) {
+              return formatPageNumber(labels, pageNumber)
+            }
             return ''
+          }}
+          renderItem={(item) => {
+            // MUI PaginationItem ignores `children` for type=page and always renders `page`.
+            // Pass the localized label via `page` (typed as ReactNode).
+            if (item.type === 'page' && item.page != null) {
+              return (
+                <PaginationItem {...item} page={formatPageNumber(labels, item.page)} />
+              )
+            }
+            return <PaginationItem {...item} />
           }}
         />
       </Box>
